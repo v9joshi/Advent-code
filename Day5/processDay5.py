@@ -3,7 +3,7 @@ import csv
 def codeToNum(seatCode):
     # parse the seat code
     rowCode = seatCode[0:7]
-    # row values are stored as binary with F = 0,  = 1
+    # row values are stored as binary with F = 0, B = 1
     rowCode = rowCode.replace('F','0')
     rowCode = rowCode.replace('B','1')
 
