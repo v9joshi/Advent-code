@@ -27,6 +27,7 @@ def checkValidity(inputDict):
     pid = inputDict['pid']
     pidPattern = re.compile("[0-9]{9}")
 
+    # Check each of the fields for valid inputs
     if not byrPattern.fullmatch(byr):
         return 0
 
