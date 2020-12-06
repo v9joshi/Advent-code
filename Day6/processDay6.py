@@ -23,15 +23,15 @@ for currInput in inputList:
 uniqueList = []
 uniqueCount = []
 
-for currVal in responseList:
-    # Covert all responses from a single group to a string
-    currVal = "".join(currVal)
+for groupResponse in responseList:
+    # Combine all responses from a single group into a string
+    groupResponse = "".join(groupResponse)
 
-    # Turn the string into a set to find unique responses
-    uniqueList.append(set(currVal))
+    # Turn the string into a set to find unique responses (python trick)
+    uniqueList.append(set(groupResponse))
 
     # The length of the set equals the number of unique responses
-    uniqueCount.append(len(set(currVal)))
+    uniqueCount.append(len(set(groupResponse)))
 
 # Print the result
 print("Total number of yes responses = ", sum(uniqueCount))
@@ -42,26 +42,27 @@ print("Total number of yes responses = ", sum(uniqueCount))
 allYesCount = []
 
 for groupResponse in responseList:
-    # How many questions did everyone in the group answer yes to?
-    numAllYes = 0
+    # Initialize the yes counter for the group
+    groupYesCount = 0
 
     # How many people are in the group?
     groupSize = len(groupResponse)
 
     # Combine the group response into a single string
-    currVal = "".join(groupResponse)
+    groupResponse = "".join(groupResponse)
 
-    # Find all the unique responses for the group
-    uniqueVal = set(currVal)
+    # Find all the unique responses for the group (python trick)
+    uniqueVal = set(groupResponse)
 
-    # For each unique response check if the number of yes response
+    # For each unique response check if the number of yes responses
     # equals the group size
     for responseVal in uniqueVal:
-        if currVal.count(responseVal) == groupSize:
-            numAllYes = numAllYes + 1
+        # If everyone said yes, increment the yes counter
+        if groupResponse.count(responseVal) == groupSize:
+            groupYesCount = groupYesCount + 1
 
-    # Append the yes count for the group to the full yes count list
-    allYesCount.append(numAllYes)
+    # Append the yes counter for the group to the full yes counter list
+    allYesCount.append(groupYesCount)
 
 # Print the result
 print("Total number of yes responses from all groups:", sum(allYesCount))
