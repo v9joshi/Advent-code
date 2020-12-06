@@ -1,21 +1,17 @@
 import csv
 
 # create an empty array
-inputList = []
+inputList = [[]]
 
 # store the input in the array
 with open('input.txt',newline='') as csvfile:
     inputReader = csv.reader(csvfile, delimiter= ' ', quotechar='|')
+    # store the input in the array
     for row in inputReader:
-        inputList.append(row)
-
-# Clean up the input to put responses from each group together
-responseList = [[]]
-for currInput in inputList:
-    if currInput: # non empty responses should get grouped together
-        responseList[-1].extend(currInput)
-    else: # empty response indicate switching to a new group
-        responseList.append([])
+        if row:
+            inputList[-1].extend(row)
+        else:
+            inputList.append([])
 
 # First half
 # For each member of the list, convert to a set to find unique responses
@@ -23,7 +19,7 @@ for currInput in inputList:
 uniqueList = []
 uniqueCount = []
 
-for groupResponse in responseList:
+for groupResponse in inputList:
     # Combine all responses from a single group into a string
     groupResponse = "".join(groupResponse)
 
@@ -41,7 +37,7 @@ print("Total number of yes responses = ", sum(uniqueCount))
 # size of the group
 allYesCount = []
 
-for groupResponse in responseList:
+for groupResponse in inputList:
     # Initialize the yes counter for the group
     groupYesCount = 0
 
