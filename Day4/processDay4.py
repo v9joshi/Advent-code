@@ -52,20 +52,15 @@ def checkValidity(inputDict):
     return 1
 
 # create an empty array
-inputList = []
+inputList = [[]]
 # store the input in the array
 with open('input.txt',newline='') as csvfile:
     inputReader = csv.reader(csvfile, delimiter= ' ', quotechar='|')
     for row in inputReader:
-        inputList.append(row)
-
-# merge the broken segments of the list to make individual entries for a person
-newList = [[]]
-for currVal in inputList:
-    if currVal:
-        newList[-1].extend(currVal)
-    else:
-        newList.append([])
+        if row:
+            inputList[-1].extend(row)
+        else:
+            inputList.append([])
 
 # initialize checking variables
 numRight = 0
@@ -74,7 +69,7 @@ numWrong = 0
 checkSet = set(['byr','iyr','eyr','hgt','hcl','ecl','pid'])
 # now check each entry
 dictList = []
-for currPass in newList:
+for currPass in inputList:
     # check each value in each entry
     currDict = {currVal.split(':')[0]:currVal.split(':')[1] for currVal in currPass}
     dictList.append(currDict)
