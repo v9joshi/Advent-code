@@ -58,6 +58,11 @@ while not contList:
     if listSize > currIndex:
         break
 
+# Alternate solution using combinations. Slower?
+# Find all contiguous lists with at least 3 elements and at most currIndex - 1
+# elements.
+# contList = [inputList[i:j] for i, j in combinations(range(currIndex), 2) if j-i >= listSize and sum(inputList[i:j]) == firstInvalidInput]
+
 # If a solution exists, find the sum of the min and max element
 if contList:
     print('The sum of the smallest and largest number in the list is ', min(contList[0]) + max(contList[0]))
