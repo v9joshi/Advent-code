@@ -16,7 +16,7 @@ with open('input.txt',newline='') as csvfile:
     # store the input in the array
     for row in inputReader:
         if row:
-            # Store the list of rules
+            # Store the list of "transmitted" integers
             inputList.append(int(row[0]))
 
 # First half: Find the first number that doesn't fit the rule.
@@ -58,6 +58,7 @@ while not contList:
     if listSize > currIndex:
         break
 
+# If a solution exists, find the sum of the min and max element
 if contList:
     print('The sum of the smallest and largest number in the list is ', min(contList[0]) + max(contList[0]))
     print('The contiguous list is: ', contList[0])
