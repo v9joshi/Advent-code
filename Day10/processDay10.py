@@ -38,38 +38,62 @@ threeCount = joltDiffList.count(3)
 print("There are ", oneCount, ' ones and', threeCount, ' threes. The product is ', oneCount*threeCount)
 
 # Second half
+# First we will make a dictionary to store the directed graph of valid adapter
+# connections. We can either start at the device or the outlet.
 validAdapterConnections = {}
+
+# Start at the device
 currNodeVal = inputList[-1]
 inputList.pop(-1)
 
+# Iterate through all the adapters and find valid connections for them
 while inputList:
-    # How many combos for next segment?
+    # How many valid connections exist for this adapter towards the outlet?
     validAdapters = [currAdapter for currAdapter in inputList if currNodeVal - currAdapter <= 3]
 
+    # Add all of these connections into a dictionary for the current adapter
+    # so that the dictionary reads
+    # validAdapterConnections[currNodeVal] = (validAdapters)
     if validAdapters:
         validAdapterConnections[currNodeVal] = (validAdapters)
+
+        # update the current adapter variable
         currNodeVal = inputList[-1]
+
+        # Remove the last adapter from the input list so we don't visit it again
         inputList.pop(-1)
 
-#print(validAdapterConnections)
-
-# Find the number of paths in the graph that go from currAdapter to deviceJoltage
+# Find the number of paths in the graph that go from currAdapter to any adapter
+# for which we already know the number of paths to the outlet.
 # The graph connections are listed in validAdapterConnections
+# The number of paths to the outlet for a given adapter are stored in
+# nodePathCount.
 def numConnections(currAdapter, validAdapterConnections, nodePathCount):
+    # If we have already visited the adapter, do not re-do the math, just
+    # re-use the value we have already calculated
     if currAdapter in nodePathCount.keys():
             return nodePathCount[currAdapter]
+
+    # If we haven't visited the adapter, check if it is a valid adapter
+    # If it is, then count the paths leading from it to the outlet.
     elif currAdapter in validAdapterConnections.keys():
         # Initialize path count
         numPaths = 0
         for nextAdapter in validAdapterConnections[currAdapter]:
             numPaths = numPaths + numConnections(nextAdapter, validAdapterConnections, nodePathCount)
 
-        # Return the number of paths found
+        # Store the result in nodePathCount so that we don't recalculate
         nodePathCount[currAdapter] = numPaths
+
+        # Return the result
         return numPaths
+    # If this isn't a valid adapter, then there are no paths from it.
     else:
         return 0
 
-nodePathCount = {0: 1}
-print("There are ", numConnections(deviceJoltage, validAdapterConnections, nodePathCount), " valid connections")
-#print('Number of combos = ', numConnections)
+# Initialize nodePathCount with the information that anything directly connected
+# to the outlet has one path to the outlet.
+nodePathCount = {outletJoltage: 1}
+
+# Find the total number of paths from device to outlet
+print("There are ", numConnections(deviceJoltage, validAdapterConnections, nodePathCount), " valid connections from device to outlet")
