@@ -81,7 +81,7 @@ print('First half')
 print('Manhattan distance : ',ship.manhattanDist())
 
 # Second half
-# Ship starts at origin and facing east
+# Ship starts at origin and way point is at N:1, E:10
 ship = Ship((0,0),(1,10))
 
 for command, argument in zip(commandList, argumentList):
