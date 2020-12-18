@@ -1,5 +1,5 @@
 import csv
-from itertools import permutations
+
 # create empty arrays
 inputList = []
 
