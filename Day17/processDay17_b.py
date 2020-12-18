@@ -1,0 +1,112 @@
+import csv
+from math import floor
+from itertools import starmap, product
+
+def findAllNeighbours(pos):
+    # Define a list of neighbours
+    delNeighbour = starmap(lambda a,b,c,d: (pos[0]+a,pos[1]+b,pos[2]+c,pos[3]+d), product((0,-1,+1), repeat = 4))
+
+    return list(delNeighbour)[1:]
+
+def convert4dto1d(threeDimPos, numCubes, numSlices, numRows, numCols):
+    oneDimPos = threeDimPos[3]*numSlices*numRows*numCols + threeDimPos[2]*numRows*numCols + threeDimPos[1]*numCols + threeDimPos[0]
+
+    if oneDimPos < (numCols*numRows*numSlices*numCubes):
+        return oneDimPos
+    else:
+        return []
+
+def convert1dto4d(oneDimPos, numCubes, numSlices, numRows, numCols):
+    wPos = floor(oneDimPos/(numSlices*numRows*numCols))
+    zPos = floor((oneDimPos - wPos*numSlices*numRows*numCols)/(numRows*numCols))
+    yPos = floor((oneDimPos - wPos*numSlices*numRows*numCols - zPos*numRows*numCols)/numCols)
+    xPos = oneDimPos  - wPos*numSlices*numRows*numCols - zPos*numRows*numCols - yPos*numCols
+
+    if (-1 < xPos < numCols) and (-1 < yPos < numRows) and (-1 < zPos < numSlices) and (-1 < wPos < numCubes):
+        return (xPos, yPos, zPos, wPos)
+    else:
+        return([],[],[],[])
+
+def checkCondition(oneDimPos, conway4D, numCubes, numSlices, numRows, numCols):
+    fourDimPos = convert1dto4d(oneDimPos, numCubes, numSlices, numRows, numCols)
+    neighbour4DList = findAllNeighbours(fourDimPos)
+    neighbour1DList = [convert4dto1d(currNeighbour, numCubes, numSlices, numRows, numCols) for currNeighbour in neighbour4DList]
+    neighbourVals = [conway4D[neighbour1DPos] for neighbour1DPos in neighbour1DList if neighbour1DPos in range(1, len(conway4D))]
+
+    activeCount = neighbourVals.count('#')
+
+    if activeCount == 3:
+        return 1
+    elif conway4D[oneDimPos] == '#' and activeCount == 2:
+        return 1
+    else:
+        return 0
+
+def print4D(conway4D, numCubes, numSlices, numRows, numCols):
+    for wPos in range(0, numCubes):
+        print('cubeNum = ', wPos)
+        for zPos in range(0, numSlices):
+            print('sliceNum = ', zPos)
+            for yPos in range(0, numRows):
+
+                startPos = convert4dto1d((0,yPos,zPos,wPos), numCubes, numSlices, numRows, numCols)
+                print((0,yPos,zPos,wPos), ' = ', startPos)
+                print(conway4D[startPos:startPos+numCols])
+
+# create empty arrays
+inputList = []
+
+# store the input in the array
+with open('input.txt',newline='') as csvfile:
+    inputReader = csv.reader(csvfile, delimiter= '\n', quotechar='|')
+    # store the input in the array
+    for row in inputReader:
+        row = list(row[0])
+        inputList.append(row)
+
+# Conways game of life in 4D
+numCubes = 1 # Start with 1 cube
+numSlices = 1 # Start with 1 slice
+numRows = len(inputList[0]) # We already know the number of rows
+numCols = len(inputList)    # and the number of columns
+
+# initialize the list of elements
+conway4D = []
+for row in inputList:
+    conway4D.extend(row)
+
+print4D(conway4D, numCubes, numSlices, numRows, numCols)
+# Start the cycles
+cycles = 0
+while cycles < 6:
+    cycles = cycles + 1
+
+    # Find all the filled cells
+    filledCells = []
+    filledCells = [convert1dto4d(oneDimPos, numCubes, numSlices, numRows, numCols) for oneDimPos, cellVal in enumerate(conway4D) if cellVal =='#']
+
+    # Add more slices and rows and columns
+    numCubes = numCubes + 2
+    numSlices = numSlices + 2
+    numRows = numRows + 2
+    numCols = numCols + 2
+
+    # Make a space with nothing filled
+    conway4D = ['.']*numRows*numCols*numSlices*numCubes
+
+    # Refill the original spaces
+    for fourDPos in filledCells:
+        # Shift each coordinate by 1
+        fourDPos = (fourDPos[0] + 1, fourDPos[1] + 1, fourDPos[2] + 1, fourDPos[3] + 1)
+        oneDPos = convert4dto1d(fourDPos, numCubes, numSlices, numRows, numCols)
+        conway4D[oneDPos] = '#'
+
+    # print4D(conway4D, numCubes, numSlices, numRows, numCols)
+
+    # Propogate some life
+    conway4D = ['#' if checkCondition(currOneDPos, conway4D, numCubes, numSlices, numRows, numCols) else '.' for currOneDPos in range(0, len(conway4D))]
+    print4D(conway4D, numCubes, numSlices, numRows, numCols)
+
+
+numActive = conway4D.count('#')
+print('Num active cells = ', numActive)
