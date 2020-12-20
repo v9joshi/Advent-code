@@ -8,32 +8,43 @@ def findAllNeighbours(pos):
 
     return list(delNeighbour)[1:]
 
+# Convert a 3d coordinate to a 1d coordinate
 def convert3dto1d(threeDimPos, numSlices, numRows, numCols):
     oneDimPos = threeDimPos[2]*numRows*numCols + threeDimPos[1]*numCols + threeDimPos[0]
 
+    # Check that the 1d coordinate is valid
     if oneDimPos < (numCols*numRows*numSlices):
         return oneDimPos
     else:
         return []
 
+# Convert a 1d coordinate to 3d
 def convert1dto3d(oneDimPos, numSlices, numRows, numCols):
     zPos = floor(oneDimPos/(numRows*numCols))
     yPos = floor((oneDimPos - zPos*numRows*numCols)/numCols)
     xPos = oneDimPos  - zPos*numRows*numCols - yPos*numCols
 
+    # Check that the 3d coordinate is valid
     if (-1 < xPos < numCols) and (-1 < yPos < numRows) and (-1 < zPos < numSlices):
         return (xPos, yPos, zPos)
     else:
         return([],[],[])
 
+# Check the condition for life
 def checkCondition(oneDimPos, conway3D, numSlices, numRows, numCols):
+    # Find the 3d coordinate for the current cube
     threeDimPos = convert1dto3d(oneDimPos, numSlices, numRows, numCols)
+    # Find all the neighbours for this cube
     neighbour3DList = findAllNeighbours(threeDimPos)
+    # Find the 1d coordinate of the neighbours
     neighbour1DList = [convert3dto1d(currNeighbour, numSlices, numRows, numCols) for currNeighbour in neighbour3DList]
+    # Find the values for these neighbours
     neighbourVals = [conway3D[neighbour1DPos] for neighbour1DPos in neighbour1DList if neighbour1DPos in range(1, len(conway3D))]
 
+    # Count the active cells
     activeCount = neighbourVals.count('#')
 
+    # Check the condition for life
     if activeCount == 3:
         return 1
     elif conway3D[oneDimPos] == '#' and activeCount == 2:
@@ -41,11 +52,14 @@ def checkCondition(oneDimPos, conway3D, numSlices, numRows, numCols):
     else:
         return 0
 
+# Print the 3d universe
 def print3D(conway3D, numSlices, numRows, numCols):
+    # For each slice in the cube
     for zPos in range(0, numSlices):
         print('sliceNum = ', zPos)
+        # For each row in the slice:
         for yPos in range(0, numRows):
-
+            # Start at the first column and print
             startPos = convert3dto1d((0,yPos,zPos), numSlices, numRows, numCols)
             print((0,yPos,zPos), ' = ', startPos)
             print(conway3D[startPos:startPos+numCols])

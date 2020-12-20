@@ -2,39 +2,54 @@ import csv
 from math import floor
 from itertools import starmap, product
 
+# Find all the neighbours for a given 4d coordinate
 def findAllNeighbours(pos):
     # Define a list of neighbours
     delNeighbour = starmap(lambda a,b,c,d: (pos[0]+a,pos[1]+b,pos[2]+c,pos[3]+d), product((0,-1,+1), repeat = 4))
 
+    # Return the list
     return list(delNeighbour)[1:]
 
+# Convert a 4d coordinate to a 1d coordinate
 def convert4dto1d(threeDimPos, numCubes, numSlices, numRows, numCols):
     oneDimPos = threeDimPos[3]*numSlices*numRows*numCols + threeDimPos[2]*numRows*numCols + threeDimPos[1]*numCols + threeDimPos[0]
 
+    # Make sure the 1d coordinate is valid, if yes return it
     if oneDimPos < (numCols*numRows*numSlices*numCubes):
         return oneDimPos
+    # If invalid return an empty list
     else:
         return []
 
+# Convert a 1d coordinate to a 4d coordinate
 def convert1dto4d(oneDimPos, numCubes, numSlices, numRows, numCols):
     wPos = floor(oneDimPos/(numSlices*numRows*numCols))
     zPos = floor((oneDimPos - wPos*numSlices*numRows*numCols)/(numRows*numCols))
     yPos = floor((oneDimPos - wPos*numSlices*numRows*numCols - zPos*numRows*numCols)/numCols)
     xPos = oneDimPos  - wPos*numSlices*numRows*numCols - zPos*numRows*numCols - yPos*numCols
 
+    # Make sure the coordinate is valid, if yes return it
     if (-1 < xPos < numCols) and (-1 < yPos < numRows) and (-1 < zPos < numSlices) and (-1 < wPos < numCubes):
         return (xPos, yPos, zPos, wPos)
+    # If it isn't return empty coordinates
     else:
         return([],[],[],[])
 
+# Check the required condition for staying alive/coming to life
 def checkCondition(oneDimPos, conway4D, numCubes, numSlices, numRows, numCols):
+    # Find the 4d position
     fourDimPos = convert1dto4d(oneDimPos, numCubes, numSlices, numRows, numCols)
+    # Find all neighbours
     neighbour4DList = findAllNeighbours(fourDimPos)
+    # Find 1d pos of neighbours
     neighbour1DList = [convert4dto1d(currNeighbour, numCubes, numSlices, numRows, numCols) for currNeighbour in neighbour4DList]
+    # Find the values at those 1d positions
     neighbourVals = [conway4D[neighbour1DPos] for neighbour1DPos in neighbour1DList if neighbour1DPos in range(1, len(conway4D))]
 
+    # How many neighbours are active
     activeCount = neighbourVals.count('#')
 
+    # Use the rule to determine if cell should live or die
     if activeCount == 3:
         return 1
     elif conway4D[oneDimPos] == '#' and activeCount == 2:
@@ -42,14 +57,21 @@ def checkCondition(oneDimPos, conway4D, numCubes, numSlices, numRows, numCols):
     else:
         return 0
 
+# Printing the 4d universe
 def print4D(conway4D, numCubes, numSlices, numRows, numCols):
+    # Loop trough all cubes in the hypercube
     for wPos in range(0, numCubes):
         print('cubeNum = ', wPos)
+        # Loop through all slices/planes in a cube
         for zPos in range(0, numSlices):
             print('sliceNum = ', zPos)
+            # Loop through all rows in a slice/plane
             for yPos in range(0, numRows):
 
+                # Start at the first column
                 startPos = convert4dto1d((0,yPos,zPos,wPos), numCubes, numSlices, numRows, numCols)
+
+                #Print the row
                 print((0,yPos,zPos,wPos), ' = ', startPos)
                 print(conway4D[startPos:startPos+numCols])
 
