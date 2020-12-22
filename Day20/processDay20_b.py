@@ -10,7 +10,7 @@ def rotateTile(tileImage, transNum):
         for rowNum, row in enumerate(tileImage):
             tileImage[rowNum] = row[::-1]
 
-    # turn clockwise 1 times
+    # turn clockwise 1 time
     elif transNum == 1:
         tempImage = [list(row) for row in tileImage]
         tileImage = [''.join(rowVal) for rowVal in zip(*tempImage[::-1])]
@@ -24,10 +24,11 @@ def findEdges(tileImage):
     #print(tileImage)
     # Find the four edges for this image
     allEdges = []
-    allEdges.append(''.join(pixel for pixel in tileImage[0]))         # Top
-    allEdges.append(''.join(row[0] for row in tileImage[::-1]))       # Left
-    allEdges.append(''.join(pixel for pixel in tileImage[-1][::-1]))  # Bottom
-    allEdges.append(''.join(row[-1] for row in tileImage))            # Right
+    for tileOrientation in range(4):
+        # find top edge
+        allEdges.append(''.join(pixel for pixel in tileImage[0]))
+        # rotate tile
+        tileImage = rotateTile(tileImage,1)
 
     # Return the list of edges for the current image tile
     return allEdges
@@ -37,6 +38,7 @@ def imageStrip(tileImage):
     # Convert strings into lists to split them
     tileImage = [list(row) for row in tileImage]
 
+    # Remove the edges
     cleanImage = [''.join(row[1:-1]) for row in tileImage[1:-1]]
     return cleanImage
 
@@ -53,6 +55,7 @@ freeEdges = {}
 edgeConnections = {}
 for tile in tileBlocks:
     #print(tile)
+    # Find the name of the tile and the corresponding image
     tileName, tileImage = tile.split(':')
     tileName = tileName.split(' ')[1]
     tileImage = [row for row in tileImage.splitlines() if row]
@@ -60,10 +63,14 @@ for tile in tileBlocks:
     tileName = int(tileName)
 
     imageDict[tileName] = tileImage
+
+    # For each tile, make a dict of freeEdges and edgeConnections
     freeEdges[tileName] = set([0,1,2,3])
     edgeConnections[tileName] = {}
 
+# Create a set of locked tiles
 lockedTiles = set()
+# Lock any tile to start with
 lockedTiles.add(tileName)
 
 # Keep going till all tiles are locked
@@ -76,11 +83,13 @@ while len(lockedTiles) < len(imageDict.keys()):
 
         # Compare the free edges for both selected tiles
         for edge1, edge2 in product(freeEdges[tile1], freeEdges[tile2]):
+            # Edges 1 should match the reverse of edge 2 for a correct fit
             if tile1Edges[edge1] == tile2Edges[edge2][::-1]:
                 # If the edges are connected incorrectly rotate
                 if not abs(edge1 - edge2) == 2: # 0 connects to 2, 1 connects to 3
                     # turn it
                     imageDict[tile2] = rotateTile(imageDict[tile2],1)
+                # Otherwise the tile is oriented correctly
                 else:
                     # Mark edges as occupied
                     freeEdges[tile1].remove(edge1)
@@ -90,14 +99,16 @@ while len(lockedTiles) < len(imageDict.keys()):
                     edgeConnections[tile1][edge1] = tile2
                     edgeConnections[tile2][edge2] = tile1
 
-                    # If a tile has at least 2 connections, lock it
+                    # Lock the tile
                     lockedTiles.add(tile2)
+                # No need to check the other edges
                 break
 
             # If we need to flip the tile:
             elif tile1Edges[edge1] == tile2Edges[edge2]:
-                # flip it
+                # flip it and we'll find it in the next pass
                 imageDict[tile2] = rotateTile(imageDict[tile2],-1)
+                # No need to check the other edges
                 break
 
 # Run the connection routine again till everything has at least 2 connections
