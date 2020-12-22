@@ -1,5 +1,3 @@
-import re
-
 # Read the data
 f = open('input.txt')
 #f = open('testInput.txt')
@@ -27,7 +25,7 @@ def roundCombat(subDeck1, subDeck2):
     # print(card1, card2)
     # print(len(subDeck1), len(subDeck2))
 
-    # Check if the number of cards left in the deck fails the required rule
+    # Check if the number of cards left in the deck is less than the card value
     if (int(card1) > len(subDeck1)) or (int(card2) > len(subDeck2)):
         # If it fails then the winner is the person with the bigger card
         if int(card1) > int(card2):
@@ -48,9 +46,8 @@ def roundCombat(subDeck1, subDeck2):
         return subGameWinner
 
 # This is a game of recursive combat
-# Keep playing till a deck runs, a deck is too small or
-# deck order exists in game history
 def gameCombat(deck1, deck2, gameHistory):
+    # Keep playing till a deck runs out
     while deck1 and deck2:
         # print(deck1, deck2)
         # print(gameHistory)
@@ -95,7 +92,6 @@ else:
     winnerDeck = deck2
 
 #print(gameHistory)
-
 # Find the score of the winning deck
 deckScore = 0
 winnerDeck = deck1 + deck2

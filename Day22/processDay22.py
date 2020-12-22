@@ -1,5 +1,3 @@
-import re
-
 # Read the data
 f = open('input.txt')
 #f = open('testInput.txt')
