@@ -1,6 +1,4 @@
 import re
-from itertools import combinations, product
-import math
 
 # Read the data
 f = open('input.txt')
