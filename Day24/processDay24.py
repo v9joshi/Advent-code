@@ -27,7 +27,7 @@ def findNeighbours(tileCoords):
     for neighbour in neighbourList:
         neighbour = list(neighbour)
         currNeighbour = [currCoord + moveCoord for currCoord, moveCoord in zip(tileCoords, findMove(neighbour))]
-        neighbourCoords.append(tuple(currNeighbour))
+        neighbourCoords.append(currNeighbour)
 
     return neighbourCoords
 
@@ -51,8 +51,6 @@ for tile in tileBlocks:
         tileCoords = [currCoord+moveCoord for currCoord, moveCoord in zip(tileCoords, move)]
     #print(tileCoords)
 
-    tileCoords = tuple(tileCoords)
-
     # Flip the tile
     if tileCoords in blackTiles:
         # print('already black, turn white')
@@ -68,7 +66,7 @@ print('Num black tiles = ', len(blackTiles))
 
 # Second half
 numDays = 100
-neighbourDict = {}
+
 # Do the tile update for each day
 for currDay in range(numDays):
     # Make a list of all the tiles and their neighbours with repetition
@@ -80,12 +78,7 @@ for currDay in range(numDays):
 
     # Find all the tiles with black tile neighbours
     for currTile in blackTiles:
-        if tuple(currTile) in neighbourDict.keys():
-            allNeighbours = neighbourDict[currTile]
-        else:
-            allNeighbours = findNeighbours(currTile)
-            neighbourDict[currTile] = allNeighbours
-
+        allNeighbours = findNeighbours(currTile)
         # print(allNeighbours)
         allTiles.extend(allNeighbours)
 
@@ -121,14 +114,14 @@ for currDay in range(numDays):
     # Add the tiles that flip to black
     for newBlackTile in addList:
         # print('add', newBlackTile)
-        # neighbouringBlackTiles = [tile for tile in findNeighbours(newBlackTile) if tile in blackTiles]
+        neighbouringBlackTiles = [tile for tile in findNeighbours(newBlackTile) if tile in blackTiles]
         # print('Neighbours:', neighbouringBlackTiles)
-        blackTiles.append(tuple(newBlackTile))
+        blackTiles.append(newBlackTile)
 
     # Remove the tiles that flip to white
     for newWhiteTile in removeList:
         # print('remove', newWhiteTile)
-        # neighbouringBlackTiles = [tile for tile in findNeighbours(newWhiteTile) if (tile in blackTiles) and (tile not in addList)]
+        neighbouringBlackTiles = [tile for tile in findNeighbours(newWhiteTile) if (tile in blackTiles) and (tile not in addList)]
         blackTiles.remove(newWhiteTile)
 
     print('Num black tiles on day', currDay+1, ' = ', len(blackTiles))
