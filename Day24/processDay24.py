@@ -11,12 +11,12 @@ def findMove(tile):
 
     # Check direction
     if char in 'ew':
-        return [-1.0,0.0] if char == 'w' else [1.0,0.0]
+        return (-1.0,0.0) if char == 'w' else (1.0,0.0)
 
     # diagonal moves are only half moves
     if char in 'sn':
         sideMove = 0.5*findMove(tile)[0]
-        return [sideMove, 0.5] if char == 'n' else [sideMove, -0.5]
+        return (sideMove, 0.5) if char == 'n' else (sideMove, -0.5)
 
 def findNeighbours(tileCoords):
     # List the neighbour directions
@@ -26,7 +26,8 @@ def findNeighbours(tileCoords):
     # For each direction find the coordinates
     for neighbour in neighbourList:
         neighbour = list(neighbour)
-        currNeighbour = [currCoord + moveCoord for currCoord, moveCoord in zip(tileCoords, findMove(neighbour))]
+        move = findMove(neighbour)
+        currNeighbour = tuple(map(sum, zip(tileCoords, move)))
         neighbourCoords.append(currNeighbour)
 
     return neighbourCoords
@@ -41,14 +42,15 @@ for tile in tileBlocks:
         continue
 
     # Coordinates of the tiles
-    tileCoords = [0,0]
+    tileCoords = (0, 0)
     # print(tile,':')
     tile = list(tile)
 
     # Find the coordinates for the tile
     while tile:
         move = findMove(tile)
-        tileCoords = [currCoord+moveCoord for currCoord, moveCoord in zip(tileCoords, move)]
+        tileCoords = tuple(map(sum, zip(tileCoords, move)))
+
     #print(tileCoords)
 
     # Flip the tile
@@ -66,6 +68,7 @@ print('Num black tiles = ', len(blackTiles))
 
 # Second half
 numDays = 100
+neighbourDict = {}
 
 # Do the tile update for each day
 for currDay in range(numDays):
@@ -78,7 +81,12 @@ for currDay in range(numDays):
 
     # Find all the tiles with black tile neighbours
     for currTile in blackTiles:
-        allNeighbours = findNeighbours(currTile)
+        if currTile in neighbourDict.keys():
+            allNeighbours = neighbourDict[currTile]
+        else:
+            allNeighbours = findNeighbours(currTile)
+            neighbourDict[currTile] = allNeighbours
+
         # print(allNeighbours)
         allTiles.extend(allNeighbours)
 
@@ -114,14 +122,14 @@ for currDay in range(numDays):
     # Add the tiles that flip to black
     for newBlackTile in addList:
         # print('add', newBlackTile)
-        neighbouringBlackTiles = [tile for tile in findNeighbours(newBlackTile) if tile in blackTiles]
+        # neighbouringBlackTiles = [tile for tile in findNeighbours(newBlackTile) if tile in blackTiles]
         # print('Neighbours:', neighbouringBlackTiles)
         blackTiles.append(newBlackTile)
 
     # Remove the tiles that flip to white
     for newWhiteTile in removeList:
         # print('remove', newWhiteTile)
-        neighbouringBlackTiles = [tile for tile in findNeighbours(newWhiteTile) if (tile in blackTiles) and (tile not in addList)]
+        # neighbouringBlackTiles = [tile for tile in findNeighbours(newWhiteTile) if (tile in blackTiles) and (tile not in addList)]
         blackTiles.remove(newWhiteTile)
 
     print('Num black tiles on day', currDay+1, ' = ', len(blackTiles))
