@@ -2,7 +2,7 @@
 https://adventofcode.com/2022 More Julia
 
 | Day | Challenge | Main tool |
-| ------------- | ------------- |
+| --- | --------- |-----------|
 | 01  | Calorie Counter  | partialSortPerm |
 | 02  | Rock paper scissors  | dictionaries |
 | 03  | Checking bags  | Maps |
