@@ -19,11 +19,7 @@ function SceneCheck(currTree, otherTrees)
     index = findfirst(x -> x ≥ currTree, otherTrees)
 
     # Check if the tree is being blocked, and if yes by how many trees
-    if isnothing(index)
-        return (length(otherTrees), 0)
-    else
-        return (index[1], 1)
-    end
+    return (something(index, length(otherTrees)), ~isnothing(index))
 end
 
 for (idx, idy) in Iterators.product(2:maxX-1,2:maxY-1)
