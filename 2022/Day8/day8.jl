@@ -16,6 +16,8 @@ scenicScore = Dict()
 
 # Find the number of trees visible from current tree
 function SceneCheck(currTree, otherTrees)
+    # Find the first tree in the given range that's
+    # as big or bigger than the current tree
     index = findfirst(x -> x ≥ currTree, otherTrees)
 
     # Check if the tree is being blocked, and if yes by how many trees
