@@ -5,7 +5,7 @@ inputs = strip(inputs,'\n')           # Trailing end line is annoying
 inputs = split(inputs,'\n')           # Split into lines
 
 # Convert inputs into a matrix
-treeMatrix = hcat(map(x -> parse.(Int,x),split.(inputs,""))...)
+treeMatrix = parse.(Int, reduce(hcat,split.(inputs,"")))
 
 # What is the matrix size?
 (maxX, maxY) = size(treeMatrix)
