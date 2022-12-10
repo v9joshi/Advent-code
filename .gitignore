@@ -1,2 +1,5 @@
+# Don't commit inputs
+input.txt
 
+# Some testing code
 Day24/testing.py
