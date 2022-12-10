@@ -12,3 +12,4 @@ https://adventofcode.com/2022 More Julia
 | 07  | File system  | Struct |
 | 08  | Tree house  | Matrices |
 | 09  | Rope simulation | Sets |
+| 10  | CRT screen | Ternary operator |
