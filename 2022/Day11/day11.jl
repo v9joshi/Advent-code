@@ -13,7 +13,7 @@ mutable struct Monkey
 end
 
 # Make a list of all the divisors
-divisorList = []
+divisorList::Vector{Int} = []
 
 # Make a dict of monkeys
 monkeyDict = Dict()
@@ -59,7 +59,7 @@ end
 
 # Run the process num rounds times
 numRounds = 10000
-divisorProd = prod(divisorList)
+divisorProd = lcm(divisorList)
 
 for currRound = 1:numRounds
     # Run monkey operations in order
