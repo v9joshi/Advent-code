@@ -13,3 +13,4 @@ https://adventofcode.com/2022 More Julia
 | 08  | Tree house  | Matrices |
 | 09  | Rope simulation | Sets |
 | 10  | CRT screen | Ternary operator |
+| 11 | Monkey business | Structs, Math :) |
