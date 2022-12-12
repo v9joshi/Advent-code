@@ -14,3 +14,4 @@ https://adventofcode.com/2022 More Julia
 | 09  | Rope simulation | Sets |
 | 10  | CRT screen | Ternary operator |
 | 11 | Monkey business | Structs, Math :) |
+| 12 | Trail mapping | A* |
