@@ -66,7 +66,17 @@ while true
 
         # Does the sand settle?
         nextPos = map(move -> currPos[1] + move, moveTypes)
-        if all(sandMatrix[nextPos])
+        if !sandMatrix[nextPos[2]]
+            # Sand moves down
+            currPos[1] = nextPos[2]
+        elseif !sandMatrix[nextPos[1]]
+            # Sand moves left
+            currPos[1] = nextPos[1]
+        elseif !sandMatrix[nextPos[3]]
+            # Sand moves right
+            currPos[1] = nextPos[3]
+        else
+            # Yes sand settles
             numAdded = numAdded + 1
             sandMatrix[currPos[1]] = true
 
@@ -74,12 +84,6 @@ while true
             # println("Hit floor, added $numAdded grains")
             global numGrains = numGrains + numAdded
             break 
-        elseif sandMatrix[nextPos[1]] && sandMatrix[nextPos[2]]
-            currPos[1] = nextPos[3]
-        elseif sandMatrix[nextPos[2]]
-            currPos[1] = nextPos[1]
-        else
-            currPos[1] = nextPos[2]
         end
     end
 
