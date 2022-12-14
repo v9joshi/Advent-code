@@ -23,20 +23,35 @@ for line in inputs
     end
 end
 
-
-pathSet = unique(pathSet)
+pathSet  = unique(pathSet)
 numRocks = length(pathSet)
 
 # Find the bounds
 (minX, minY) = map( x -> minimum(map(y -> y[x] ,pathSet)),1:2)
 (maxX, maxY) = map( x -> maximum(map(y -> y[x] ,pathSet)),1:2)
 
+# Make a matrix to map the cave
+depth = maxY + 3
+
+maxX = max(maxX, 500 + depth)
+minX = min(minX, 500 - depth) + 2
+
+width = maxX - minX + 1
+sandMatrix = falses(width,depth)
+
+# Fix all the points in the pathSet to start at 1,1
+pathSet = map( x-> (x[1] - minX + 1, x[2] + 1), pathSet)
+
+# Set all the rocky points to true
+sandMatrix[CartesianIndex.(pathSet)] .= true
+# display(sandMatrix)
+
 # Where is the floor?
-floorY = maxY + 2
+floorY = depth
 println("Floor at ", floorY)
 
 # List all possible moves for a grain of sand
-moveTypes = [(-1,1),(0,1),(1,1)] # L, D, R
+moveTypes = CartesianIndex.([(-1,1),(0,1),(1,1)]) # L, D, R
 
 # Start adding sand
 fallingOff = false
@@ -46,7 +61,7 @@ numGrains  = 0
 
 while true
     # Start at the sand origin
-    currPos          = [(500,0)]
+    currPos = [CartesianIndex(500 - minX + 1,1)]
 
     # Keep moving the grain till it hits something or falls of the edge
     while length(currPos) > 0
@@ -58,18 +73,18 @@ while true
             global floorY = floorY - 1
 
             # How many grains are added?
-            append!(pathSet, currPos)
+            sandMatrix[currPos] .= true
             numAdded = length(currPos)
             global numGrains = numGrains + numAdded
             
-            println("Hit floor, added $numAdded grains")
+            # println("Hit floor, added $numAdded grains")
             break
         else
             # How will these grains expand on the next step?
-            nextStep = map(pair -> pair[1] .+ pair[2], Iterators.product(currPos, moveTypes)) |> unique
+            nextStep = map(pair -> pair[1] + pair[2], Iterators.product(currPos, moveTypes)) |> unique
  
             # Remove all intersections with the path set
-            nextStep = filter(currPoint -> !(currPoint in pathSet), nextStep)
+            nextStep = filter(currPoint -> !sandMatrix[currPoint], nextStep)
 
             # Update the sand particle positions
             currPos = nextStep
@@ -77,13 +92,13 @@ while true
     end
 
     # End the loop when we cover the sand source
-    if floorY == 0
-        println(currPos)
+    if floorY == 1
+        # println(currPos)
         break
     end
 
     # Remove all the points in the set that are lower than the current floor
-    global pathSet = filter(x -> x[2] < floorY, pathSet)
+    # global pathSet = filter(x -> x[2] < floorY, pathSet)
 end
 
 # Print the number of added grains
