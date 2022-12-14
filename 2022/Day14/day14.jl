@@ -19,20 +19,24 @@ for line in inputs
         # Push all nodes in the path to the path set
         listX = (startNode[1] < endNode[1]) ? (startNode[1]:endNode[1]) : (endNode[1]:startNode[1])
         listY = (startNode[2] < endNode[2]) ? (startNode[2]:endNode[2]) : (endNode[2]:startNode[2])
-
-        for (x,y) in Iterators.product(listX, listY)
-            push!(pathSet,(x,y))
-        end
+        append!(pathSet, Iterators.product(listX, listY))
     end
 end
+
+
 pathSet = unique(pathSet)
+numRocks = length(pathSet)
 
 # Find the bounds
 (minX, minY) = map( x -> minimum(map(y -> y[x] ,pathSet)),1:2)
 (maxX, maxY) = map( x -> maximum(map(y -> y[x] ,pathSet)),1:2)
 
 # Where is the floor?
-println("Floor at ", maxY + 2)
+floorY = maxY + 2
+println("Floor at ", floorY)
+
+# List all possible moves for a grain of sand
+moveTypes = [(-1,1),(0,1),(1,1)] # L, D, R
 
 # Start adding sand
 fallingOff = false
@@ -40,55 +44,46 @@ numGrains  = 0
 
 # println(pathSet)
 
-while !((500,0) in pathSet)
+while true
     # Start at the sand origin
-    currPos          = (500,0)
+    currPos          = [(500,0)]
 
     # Keep moving the grain till it hits something or falls of the edge
-    while true
+    while length(currPos) > 0
         # println("Move grain to next pos ", currPos)
-        # Find the set of three possible moves
-        nextD = currPos .+ ( 0,1)
-        nextL = currPos .+ (-1,1)
-        nextR = currPos .+ ( 1,1)
-
-        # Did the sand grain move?
-        change = 0
-        # println("nextD = ", nextD)
-
         # Check if floor is hit
-        if currPos[2] == maxY + 1
+        if currPos[1][2] == floorY - 1
             # println(currPos)
-            push!(pathSet, currPos)
-            global numGrains = numGrains + 1
-            # println("Hit floor")
-            break
-        end
+            # Remove the bottom most row
+            global floorY = floorY - 1
 
-        # Check all moves
-        if !(nextD in pathSet)
-            # Can move down
-            currPos = nextD
-        end
-
-        if (nextD in pathSet) && (nextL in pathSet) && (nextR in pathSet)
-            global numGrains = numGrains + 1
-            push!(pathSet, currPos)
+            # How many grains are added?
+            append!(pathSet, currPos)
+            numAdded = length(currPos)
+            global numGrains = numGrains + numAdded
+            
+            println("Hit floor, added $numAdded grains")
             break
-        elseif (nextD in pathSet) && (nextL in pathSet)
-            currPos = nextR
-        elseif (nextD in pathSet)
-            currPos = nextL
         else
-            currPos = nextD
-        end
+            # How will these grains expand on the next step?
+            nextStep = map(pair -> pair[1] .+ pair[2], Iterators.product(currPos, moveTypes)) |> unique
+ 
+            # Remove all intersections with the path set
+            nextStep = filter(currPoint -> !(currPoint in pathSet), nextStep)
 
-        # Are we falling off the edge?
-        if (500,0) in pathSet
-            global fallingOff = true
-            break
+            # Update the sand particle positions
+            currPos = nextStep
         end
     end
+
+    # End the loop when we cover the sand source
+    if floorY == 0
+        println(currPos)
+        break
+    end
+
+    # Remove all the points in the set that are lower than the current floor
+    global pathSet = filter(x -> x[2] < floorY, pathSet)
 end
 
 # Print the number of added grains
