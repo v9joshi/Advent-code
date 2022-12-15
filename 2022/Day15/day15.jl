@@ -38,39 +38,36 @@ function findBlocked(targetRow, sensorDict, minX = -Inf, maxX = Inf)
         colA = min(max(colA, minX), maxX)
         colB = min(max(colB, minX), maxX)
 
-        # Store the set
-        push!(blockedSet, (colA, colB))
-    end
+        # Remove overlaps
+        testSet = [(colA, colB)]
 
-    # Remove overlaps
-    cleanedSet = []
-
-    while length(blockedSet) > 0
-        # Read an element in the old group
-        (colA, colB) = pop!(blockedSet)
-
-        # Check for overlaps
-        overlap = false
-        for (num, (cleanA, cleanB)) in enumerate(cleanedSet)
-            # Check if overlapping
-            if max(colA, cleanA) ≤ min(colB, cleanB)
-                overlap = true
-                colA = min(colA, cleanA)
-                colB = max(colB, cleanB)
-                cleanedSet = deleteat!(cleanedSet, num)
-                break
+        while length(testSet) > 0
+            # Read an element in the old group
+            (colA, colB) = pop!(testSet)
+    
+            # Check for overlaps
+            overlap = false
+            for (num, (cleanA, cleanB)) in enumerate(blockedSet)
+                # Check if overlapping
+                if max(colA, cleanA) ≤ min(colB, cleanB)
+                    overlap = true
+                    colA = min(colA, cleanA)
+                    colB = max(colB, cleanB)
+                    deleteat!(blockedSet, num)
+                    break
+                end
+            end
+    
+            # If overlap add to blocked set else add to clean set
+            if overlap
+                push!(testSet, (colA, colB))
+            else
+                push!(blockedSet, (colA, colB))
             end
         end
-
-        # If overlap add to blocked set else add to clean set
-        if overlap
-            push!(blockedSet, (colA, colB))
-        else
-            push!(cleanedSet, (colA, colB))
-        end
     end
-
-    return cleanedSet
+  
+    return blockedSet
 end
 
 # Part 1
@@ -117,4 +114,3 @@ end
 dt4 = time() - t
 println("Time taken = $dt4")
 println("Tuning freq: ", tuningFreq)
-
