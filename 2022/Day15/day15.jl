@@ -39,44 +39,34 @@ function findBlocked(targetRow, sensorDict, minX = -Inf, maxX = Inf)
         colB = min(max(colB, minX), maxX)
 
         # Store the set
-        push!(blockedSet, [colA, colB])
+        push!(blockedSet, (colA, colB))
     end
 
     # Remove overlaps
     cleanedSet = []
 
     while length(blockedSet) > 0
-        # Read the first element in the old group
-        (colA, colB) = popfirst!(blockedSet)
+        # Read an element in the old group
+        (colA, colB) = pop!(blockedSet)
 
-        # If the clean set is empty add the region
-        if length(cleanedSet) == 0
-            push!(cleanedSet, [colA, colB])
+        # Check for overlaps
+        overlap = false
+        for (num, (cleanA, cleanB)) in enumerate(cleanedSet)
+            # Check if overlapping
+            if max(colA, cleanA) ≤ min(colB, cleanB)
+                overlap = true
+                colA = min(colA, cleanA)
+                colB = max(colB, cleanB)
+                cleanedSet = deleteat!(cleanedSet, num)
+                break
+            end
+        end
+
+        # If overlap add to blocked set else add to clean set
+        if overlap
+            push!(blockedSet, (colA, colB))
         else
-            # Check for overlaps
-            overlap = false
-            for region in cleanedSet
-                # Check if subset
-                if (colA ≤ region[1] && region[2] ≤ colB)
-                    overlap = true
-                    cleanedSet = setdiff(cleanedSet, [region])
-                    break
-                # Check if partial overlap
-                elseif (region[1] ≤ colA ≤ region[2]) || (region[1] ≤ colB ≤ region[2])
-                    colA = min(colA, region[1])
-                    colB = max(colB, region[2])
-                    overlap = true
-                    cleanedSet = setdiff(cleanedSet, [region])
-                    break
-                end
-            end
-
-            # If overlap add to blocked set else add to clean set
-            if overlap
-                push!(blockedSet, [colA, colB])
-            else
-                push!(cleanedSet, [colA, colB])
-            end
+            push!(cleanedSet, (colA, colB))
         end
     end
 
@@ -84,21 +74,26 @@ function findBlocked(targetRow, sensorDict, minX = -Inf, maxX = Inf)
 end
 
 # Part 1
+t = time()
 targetRow  = 2000000
 blockedSet = findBlocked(targetRow, sensorDict)
+dt1 = time() - t
 
 # Find the beacons on the target row
-filledSet  = filter(x-> x[2] == targetRow, collect(values(sensorDict)))
-filledSet  = map(x-> x[1], filledSet) |> unique
+filledSet  = filter(x-> x[2] == targetRow, collect(values(sensorDict)))[:][1] |> unique
+dt2 = time() - t
 
 # Find the number of blocked points
 blockedPoints = map(x -> (x[2] - x[1] + 1), blockedSet) |> sum
 blockedPoints = blockedPoints - length(filledSet)
+dt3 = time() - t
 
 # What's the total number of blocked points?
+println("Time taken = $dt1, $dt2, $dt3")
 println("Num blocked points = ", blockedPoints)
 
 # Part 2
+t = time()
 maxInd     = 4000000
 minInd     = 0
 tuningFreq = 0
@@ -119,5 +114,7 @@ for currRow in minInd:maxInd
     end
 end
 
+dt4 = time() - t
+println("Time taken = $dt4")
 println("Tuning freq: ", tuningFreq)
 
