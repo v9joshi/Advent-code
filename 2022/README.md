@@ -17,3 +17,5 @@ https://adventofcode.com/2022 More Julia
 | 12 | Trail mapping | A* |
 | 13 | Sorting complex lists | Multiple dispatch |
 | 14 | Sand piles | Sparse representations |
+| 15 | Beacon seach | Some math |
+| 16 | Volcano pressure | Memoizing |
