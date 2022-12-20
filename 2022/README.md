@@ -19,3 +19,6 @@ https://adventofcode.com/2022 More Julia
 | 14 | Sand piles | Sparse representations |
 | 15 | Beacon seach | Some math |
 | 16 | Volcano pressure | Memoizing |
+| 17 | Weird tetris | Pattern matching |
+| 18 | Lava cooling | Dynamic programming |
+| 19 | Geode mining | More graph traversal |
