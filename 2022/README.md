@@ -17,8 +17,10 @@ https://adventofcode.com/2022 More Julia
 | 12 | Trail mapping | A* |
 | 13 | Sorting complex lists | Multiple dispatch |
 | 14 | Sand piles | Sparse representations |
-| 15 | Beacon seach | Some math |
+| 15 | Beacon search | Some math |
 | 16 | Volcano pressure | Memoizing |
 | 17 | Weird tetris | Pattern matching |
 | 18 | Lava cooling | Dynamic programming |
 | 19 | Geode mining | More graph traversal |
+| 20 | Codebreaking | Thinking about circular lists |
+| 21 | Parsing monkey math | Try catch and gradient descent |
