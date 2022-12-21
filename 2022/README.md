@@ -15,7 +15,7 @@ https://adventofcode.com/2022 More Julia
 | 10  | CRT screen | Ternary operator |
 | 11 | Monkey business | Structs, Math :) |
 | 12 | Trail mapping | A* |
-| 13 | Sorting complex lists | Multiple dispatch |
+| 13 | Sorting complex lists | Multiple dispatch and eval |
 | 14 | Sand piles | Sparse representations |
 | 15 | Beacon search | Some math |
 | 16 | Volcano pressure | Memoizing |
