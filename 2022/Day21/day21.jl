@@ -86,19 +86,10 @@ res1 = findRoot(inputs2, guess1)
 res2 = findRoot(inputs2, guess2)
 
 # Keep looping till we get the solution
-while true
+while res1*res2 != 0
     # Print the result
     println(guess1, " -> ", res1)
     println(guess2, " -> ", res2)
-
-    # Check if sol is found
-    if res2 == 0
-        println("Sol = ", guess2)
-        break
-    elseif res1 == 0
-        println("Sol = ", guess1)
-        break
-    end
 
     # Now we update the guesses
     Δ = (guess2 - guess1)/(res2 - res1)
@@ -111,4 +102,11 @@ while true
         global guess1 = guess2 - Δ*res2
         global res1   = findRoot(inputs2, guess1)
     end
+end
+
+# Print the solution
+if res2 == 0
+    println("Sol = ", guess2)
+elseif res1 == 0
+    println("Sol = ", guess1)
 end
