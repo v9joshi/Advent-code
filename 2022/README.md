@@ -1,4 +1,4 @@
-# AdventCode2021
+# AdventCode2022
 https://adventofcode.com/2022 More Julia
 
 | Day | Challenge | Main tool |
@@ -18,9 +18,13 @@ https://adventofcode.com/2022 More Julia
 | 13 | Sorting complex lists | Multiple dispatch and eval |
 | 14 | Sand piles | Sparse representations |
 | 15 | Beacon search | Some math |
-| 16 | Volcano pressure | Memoizing |
+| 16 | Volcano pressure | Pre-computing distances |
 | 17 | Weird tetris | Pattern matching |
 | 18 | Lava cooling | Dynamic programming |
 | 19 | Geode mining | More graph traversal |
 | 20 | Codebreaking | Thinking about circular lists |
 | 21 | Parsing monkey math | Try catch and gradient descent |
+| 22 | Cube pathing |  |
+| 23 | Tree planting | Game of life |
+| 24 | Blizzard canyon | More path finding |
+| 25 | Base 5 math | Math logic with +/- digits |
